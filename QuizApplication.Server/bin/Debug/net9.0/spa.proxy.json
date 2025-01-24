@@ -1,0 +1,10 @@
+{
+"SpaProxyServer": {
+"ServerUrl": "https://localhost:60883",
+"RedirectUrl": "",
+"LaunchCommand": "npm run dev",
+"WorkingDirectory": "C:\\Users\\biram\\Desktop\\coding\\QuizApplication\\QuizApplication.Server\\..\\quizapplication.client",
+"MaxTimeoutInSeconds": "120",
+"KeepRunning": "false"
+}
+}

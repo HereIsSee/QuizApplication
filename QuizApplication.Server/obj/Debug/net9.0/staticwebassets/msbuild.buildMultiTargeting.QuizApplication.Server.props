@@ -1,0 +1,3 @@
+﻿<Project>
+  <Import Project="..\build\QuizApplication.Server.props" />
+</Project>

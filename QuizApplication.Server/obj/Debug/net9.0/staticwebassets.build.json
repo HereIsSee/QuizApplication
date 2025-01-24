@@ -1,0 +1,24 @@
+{
+  "Version": 1,
+  "Hash": "qyvZhj36PK8efqwVQKUzuQBIrvnELdDksCUdIf7BZbs=",
+  "Source": "QuizApplication.Server",
+  "BasePath": "_content/QuizApplication.Server",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [
+    {
+      "Identity": "C:\\Users\\biram\\Desktop\\coding\\QuizApplication\\quizapplication.client\\quizapplication.client.esproj",
+      "Version": 2,
+      "Source": "quizapplication.client",
+      "GetPublishAssetsTargets": "GetCurrentProjectPublishStaticWebAssetItems",
+      "AdditionalPublishProperties": "Configuration=Debug;Platform=AnyCPU",
+      "AdditionalPublishPropertiesToRemove": "WebPublishProfileFile;TargetFramework",
+      "GetBuildAssetsTargets": "GetCurrentProjectBuildStaticWebAssetItems",
+      "AdditionalBuildProperties": "Configuration=Debug;Platform=AnyCPU",
+      "AdditionalBuildPropertiesToRemove": "WebPublishProfileFile;TargetFramework"
+    }
+  ],
+  "DiscoveryPatterns": [],
+  "Assets": [],
+  "Endpoints": []
+}
