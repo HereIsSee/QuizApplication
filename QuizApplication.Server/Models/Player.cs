@@ -16,5 +16,36 @@ namespace QuizApp.Server.Models
             Score = score;
             Time = time;
         }
+
+        public static int CalculateScore(List<Question> questions, Dictionary<string, string> playerAnswers)
+        {
+            foreach(Question question in questions)
+            {
+                var pair = playerAnswers[question.Id.ToString()];
+
+                if(pair != null)
+                {
+                    switch(question.Type)
+                    {
+                        case "text input":
+
+                            break;
+                        case "single anwser":
+
+                            break;
+
+                        case "multiple answers":
+
+                            break;
+
+                        default:
+
+                            break;
+                    }
+                }
+            }
+
+            return 0;
+        }
     }
 }

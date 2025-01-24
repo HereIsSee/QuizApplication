@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using QuizApp.Server.Models;
 
@@ -26,6 +27,8 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+List<Question> questions;
+
 app.MapGet("/leaderboard", async (PlayerContext context) =>
 {
     var topTenPlayers = await context.Players
@@ -40,13 +43,24 @@ app.MapGet("/leaderboard", async (PlayerContext context) =>
 
 app.MapGet("/quiz", () =>
 {
-    return Question.GetQuestions();
+    questions = Question.GetQuestions();
+    return questions;
 })
 .WithName("GetQuestions");
 
-app.MapPost("/quiz", () =>
+app.MapPost("/quiz", async (HttpRequest request) =>
 {
-    return Results.Ok();
+    var form = await request.ReadFormAsync();
+
+    // Retrieve all posted data
+    var formData = form.ToDictionary(k => k.Key, v => v.Value.ToString());
+
+    //Player playerData = Player.
+
+    // Log or return the data
+    return Results.Ok(formData);
+
+    //return Results.Ok();
 });
 
 app.MapFallbackToFile("/index.html");

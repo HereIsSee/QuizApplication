@@ -8,6 +8,7 @@ interface Question {
     possibleAnswers: string[];
     answers: string[];
 }
+
 function Quiz() {
     const [questions, setQuestions] = useState<Question[]>();
 
@@ -15,10 +16,37 @@ function Quiz() {
         getQuestions();
     }, []);
 
+    const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+
+        const formData = new FormData(e.currentTarget);
+
+        fetch('quiz', {
+            method: 'POST',
+            body: formData,
+        }).then((response) => {
+            if (response.ok) {
+                return response.json(); // Return the JSON data as a promise
+            } else {
+                console.error("Response error:", response.status, response.statusText);
+                return Promise.reject("Failed to fetch data");
+            }
+        }).then((data) => {
+            console.log("JSON Data:", JSON.stringify(data, null, 2)); // Log JSON data with pretty print
+        }).catch((error) => {
+            console.error("Error:", error);
+        });
+
+
+    }
+
     const quizType = (question: Question) => {
         if (question.type === "text input") {
             return (
-                <input type="text" name={question.id.toString()} />
+                <input
+                    type="text"
+                    name={question.id.toString()}
+                />
             );
         } else if (question.type === "single anwser") {
             return (
@@ -58,7 +86,7 @@ function Quiz() {
     const contents = questions === undefined
     ? <p><em>Something went wrong, check API</em></p>
         :
-        <form action="/quiz" method="post">
+        <form onSubmit={onSubmit}>
             <label htmlFor="email">Enter your email:</label>
             <input type="email" id="email" name="email"/>
             {questions.map(question =>
@@ -88,9 +116,6 @@ function Quiz() {
             console.error('Fetch failed:', error);
         }
     }
-
-
-
 
 }
 
