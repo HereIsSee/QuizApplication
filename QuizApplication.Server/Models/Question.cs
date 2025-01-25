@@ -1,4 +1,5 @@
 ﻿using System.Reflection.Metadata.Ecma335;
+using System.Text.Json.Serialization;
 
 namespace QuizApp.Server.Models
 {
@@ -8,7 +9,9 @@ namespace QuizApp.Server.Models
         public string Title { get; set; }
         public string Type { get; set; }
         public List<string> PossibleAnswers { get; set; } = new List<string>();
-        public List<string> Answers { get; set; } = new List<string>();
+
+        [JsonIgnore]
+        public List<string>? Answers { get; set; } = new List<string>();
 
         public Question(int id, string title, string type, List<string> possibleAnwsers, List<string> answers)
         {
@@ -18,6 +21,7 @@ namespace QuizApp.Server.Models
             PossibleAnswers = possibleAnwsers;
             Answers = answers;
         }
+
 
         public static List<Question> GetQuestions()
         {
