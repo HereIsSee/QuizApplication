@@ -27,7 +27,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-List<Question> questions;
+List<Question> questions = Question.GetQuestions(); ;
 
 app.MapGet("/leaderboard", async (PlayerContext context) =>
 {
@@ -43,24 +43,37 @@ app.MapGet("/leaderboard", async (PlayerContext context) =>
 
 app.MapGet("/quiz", () =>
 {
-    questions = Question.GetQuestions();
     return questions;
 })
 .WithName("GetQuestions");
 
-app.MapPost("/quiz", async (HttpRequest request) =>
+app.MapPost("/quiz", async (HttpRequest request, PlayerContext context) =>
 {
     var form = await request.ReadFormAsync();
 
     // Retrieve all posted data
     var formData = form.ToDictionary(k => k.Key, v => v.Value.ToString());
 
-    //Player playerData = Player.
+    int score = Player.CalculateScore(questions, formData);
+
+    var player = new Player
+    {
+        Email = formData["email"],
+        Score = score,
+        Time = DateTime.UtcNow // Capture the current time
+    };
+
+    // Add the player to the database
+    await context.Players.AddAsync(player);
+    await context.SaveChangesAsync();
+
+    // Return a success message or the player's data
+    return Results.Ok(new { message = "Player added successfully!", player });
+    //Player playerData = new Player(form["email"], )
 
     // Log or return the data
-    return Results.Ok(formData);
+    //return Results.Ok(formData);
 
-    //return Results.Ok();
 });
 
 app.MapFallbackToFile("/index.html");

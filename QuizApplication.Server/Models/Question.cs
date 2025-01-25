@@ -60,7 +60,7 @@ namespace QuizApp.Server.Models
                 "How many days are there in a week?",
                 "single anwser",
                 new List<string> { "6", "3", "7", "4" },
-                new List<string> { "Unicorn" }
+                new List<string> { "7" }
                 ));
 
             questions.Add(new Question(
@@ -68,7 +68,7 @@ namespace QuizApp.Server.Models
                 "How many seconds make one hour?",
                 "single anwser",
                 new List<string> { "600", "60", "3600", "1200" },
-                new List<string> { "Unicorn" }
+                new List<string> { "3600" }
                 ));
 
             questions.Add(new Question(
