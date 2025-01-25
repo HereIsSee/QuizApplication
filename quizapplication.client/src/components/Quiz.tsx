@@ -13,13 +13,36 @@ function Quiz() {
     const [questions, setQuestions] = useState<Question[]>();
     const [submissionResult, setSubmissionResult] = useState<Player>();
     
-
-
     useEffect(() => {
         getQuestions();
     }, []);
 
-    
+
+    const randomizeQuestions = (array: Question[]): Question[] => {
+        const shuffledQuestions = [...array];
+
+        // Randomize questions
+        for (let i = shuffledQuestions.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [shuffledQuestions[i], shuffledQuestions[j]] = [shuffledQuestions[j], shuffledQuestions[i]];
+        }
+
+        // Randomize possible answers for each question
+        for (const question of shuffledQuestions) {
+            if (question.type !== "text input") {
+                const shuffledAnswers = [...question.possibleAnswers];
+                for (let i = shuffledAnswers.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [shuffledAnswers[i], shuffledAnswers[j]] = [shuffledAnswers[j], shuffledAnswers[i]];
+                }
+                question.possibleAnswers = shuffledAnswers;
+            }
+        }
+
+        return shuffledQuestions;
+    };
+
+
 
     const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -38,6 +61,10 @@ function Quiz() {
             }
         }).then((data) => {
             setSubmissionResult(data);
+            if (questions) {
+                setQuestions(randomizeQuestions(questions)); // Reshuffle existing questions
+            }
+            
         }).catch((error) => {
             console.error("Error:", error);
         });
@@ -165,11 +192,12 @@ function Quiz() {
         try {
             const response = await fetch('quiz');
 
-            console.log('Response:', response);
+            console.log(JSON.stringify(response, null, 2));
 
             if (response.ok) {
                 const data = await response.json();
-                setQuestions(data);
+                setQuestions(randomizeQuestions(data));
+
             } else {
                 console.error('Error:', response.status, response.statusText);
             }
