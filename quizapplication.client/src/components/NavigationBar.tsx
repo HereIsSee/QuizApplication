@@ -6,7 +6,7 @@ interface NavigationBarProps {
 
 function NavigationBar({ setCurrentView }: NavigationBarProps) {
     return (
-        <nav className="navbar navbar-expand navbar-light bg-light">
+        <nav className="navbar navbar-expand navbar-light bg-light mb-3 ps-3">
             <a className="navbar-brand" href="" onClick={() => setCurrentView('Quiz')}>QuizGame</a>
             <ul className="navbar-nav">
                 <li className="nav-item">

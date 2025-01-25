@@ -8,9 +8,12 @@ function App() {
 
     return (
         <>
+
             <NavigationBar setCurrentView={setCurrentView} />
-            {currentView === 'Quiz' && <Quiz />}
-            {currentView === 'Leaderboard' && <Leaderboard />}
+            <div className="container">
+                {currentView === 'Quiz' && <Quiz />}
+                {currentView === 'Leaderboard' && <Leaderboard />}
+            </div>
         </>
     );
 }

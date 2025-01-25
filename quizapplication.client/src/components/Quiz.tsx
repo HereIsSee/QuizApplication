@@ -44,6 +44,7 @@ function Quiz() {
         if (question.type === "text input") {
             return (
                 <input
+                    className="form-control"
                     type="text"
                     name={question.id.toString()}
                     required
@@ -55,13 +56,17 @@ function Quiz() {
                     {question.possibleAnswers.map(possibleAnswer => (
                         <div key={possibleAnswer}>
                             <input
+                                className="form-check-input" 
                                 type="radio"
                                 id={question.id.toString().concat(possibleAnswer)}
                                 name={question.id.toString()}
                                 value={possibleAnswer}
                                 required 
                             />
-                            <label htmlFor={question.id.toString().concat(possibleAnswer)}>{possibleAnswer}</label>
+                            <label
+                                className="form-check-label"
+                                htmlFor={question.id.toString().concat(possibleAnswer)}>{possibleAnswer}
+                            </label>
                         </div>
                     ))}
                 </>
@@ -72,6 +77,7 @@ function Quiz() {
                     {question.possibleAnswers.map((possibleAnswer, index) => (
                         <div key={possibleAnswer}>
                             <input
+                                className="form-check-input"
                                 type="checkbox"
                                 id={question.id.toString().concat(possibleAnswer)}
                                 name={question.id.toString()}
@@ -87,7 +93,10 @@ function Quiz() {
                                     name={question.id.toString()}
                                 />
                             )}
-                            <label htmlFor={question.id.toString().concat(possibleAnswer)}>{possibleAnswer}</label>
+                            <label
+                                className="form-check-label"
+                                htmlFor={question.id.toString().concat(possibleAnswer)}>{possibleAnswer}
+                            </label>
                         </div>
                     ))}
                 </>
@@ -99,15 +108,24 @@ function Quiz() {
     ? <p><em>Loading... Reload the page if it's still not working</em></p>
         :
         <form onSubmit={onSubmit}>
-            <label htmlFor="email">Enter your email:</label>
-            <input type="email" id="email" name="email" required/>
-            {questions.map(question =>
-                <div>
-                    <h2>{question.title}</h2>
-                    {quizType(question)}
+            <div className="form-group mb-2">
+                <label htmlFor="email">Enter your email:</label>
+                <input className="form-control" type="email" id="email" name="email" required />
+            </div>
+            
+            {questions.map((question, index) => (
+                <div className="card mb-3" key={index}>
+                    <div className="card-body">
+                        <p className="card-title fw-bold">{question.title}</p>
+
+                        <div className="card-text">
+                            {quizType(question)}
+                        </div>
+                    </div>
                 </div>
-            )}
-            <button type="submit" className="btn btn-primary">Submit</button>
+            ))}
+
+            <button type="submit" className="btn btn-primary mb-2">Submit</button>
         </form>
 
     return contents;
