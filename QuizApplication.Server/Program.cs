@@ -58,20 +58,15 @@ app.MapPost("/quiz", async (HttpRequest request, PlayerContext context) =>
     {
         Email = formData["email"],
         Score = score,
-        Time = DateTime.UtcNow // Capture the current time
+        Time = DateTime.UtcNow
     };
 
     // Add the player to the database
     await context.Players.AddAsync(player);
     await context.SaveChangesAsync();
 
-    // Return a success message or the player's data
-    return Results.Ok(new { message = "Player added successfully!", player });
-    //Player playerData = new Player(form["email"], )
-
-    // Log or return the data
-    //return Results.Ok(formData);
-
+    // Return the player's data
+    return Results.Ok(player);
 });
 
 app.MapFallbackToFile("/index.html");

@@ -1,12 +1,6 @@
 import { useEffect, useState } from 'react';
+import { Player } from '../interfaces/Player';
 
-
-interface Player {
-    id: number,
-    email: string,
-    score: number,
-    time: Date
-}
 
 function Leaderboard() {
     const [players, setPlayers] = useState<Player[]>([]);

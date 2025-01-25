@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-
+import { Player } from '../interfaces/Player'
 
 interface Question {
     id: number;
@@ -11,10 +11,15 @@ interface Question {
 
 function Quiz() {
     const [questions, setQuestions] = useState<Question[]>();
+    const [submissionResult, setSubmissionResult] = useState<Player>();
+    
+
 
     useEffect(() => {
         getQuestions();
     }, []);
+
+    
 
     const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -32,7 +37,7 @@ function Quiz() {
                 return Promise.reject("Failed to fetch data");
             }
         }).then((data) => {
-            console.log("JSON Data:", JSON.stringify(data, null, 2)); // Log JSON data with pretty print
+            setSubmissionResult(data);
         }).catch((error) => {
             console.error("Error:", error);
         });
@@ -105,19 +110,18 @@ function Quiz() {
     };
 
     const contents = questions === undefined
-    ? <p><em>Loading... Reload the page if it's still not working</em></p>
+        ? <p><em>Loading... Reload the page if it's still not working</em></p>
         :
         <form onSubmit={onSubmit}>
             <div className="form-group mb-2">
                 <label htmlFor="email">Enter your email:</label>
                 <input className="form-control" type="email" id="email" name="email" required />
             </div>
-            
+
             {questions.map((question, index) => (
                 <div className="card mb-3" key={index}>
                     <div className="card-body">
                         <p className="card-title fw-bold">{question.title}</p>
-
                         <div className="card-text">
                             {quizType(question)}
                         </div>
@@ -128,7 +132,34 @@ function Quiz() {
             <button type="submit" className="btn btn-primary mb-2">Submit</button>
         </form>
 
-    return contents;
+    const resultContent = submissionResult && (
+        <div className="card text-center">
+            <div className="card-header bg-success text-white">Success</div>
+            <div className="card-body">
+                <h5 className="card-title">Score Summary</h5>
+                <p className="card-text">
+                    <strong>Email:</strong> {submissionResult.email}
+                </p>
+                <p className="card-text">
+                    <strong>Score:</strong> {submissionResult.score}
+                </p>
+                <p className="card-text">
+                    <small className="text-muted">
+                        Submitted on: {new Date(submissionResult.time).toLocaleString('en-GB')}
+                    </small>
+                </p>
+            </div>
+
+            <button className="btn btn-primary mb-2" onClick={() => setSubmissionResult(undefined)} >Try again?</button>
+        </div>
+    );
+
+    return (
+        <div>
+            {submissionResult ? resultContent : contents}
+        </div>
+    );
+
 
     async function getQuestions() {
         try {
