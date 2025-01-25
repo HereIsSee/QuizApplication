@@ -16,6 +16,10 @@ namespace QuizApp.Server.Models
 
             foreach(Question question in questions)
             {
+                if (!playerAnswers.ContainsKey(question.Id.ToString()))
+                {
+                    continue;
+                }
                 var answer = playerAnswers[question.Id.ToString()];
 
                 if(answer != null)

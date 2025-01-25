@@ -46,6 +46,7 @@ function Quiz() {
                 <input
                     type="text"
                     name={question.id.toString()}
+                    required
                 />
             );
         } else if (question.type === "single anwser") {
@@ -58,6 +59,7 @@ function Quiz() {
                                 id={question.id.toString().concat(possibleAnswer)}
                                 name={question.id.toString()}
                                 value={possibleAnswer}
+                                required 
                             />
                             <label htmlFor={question.id.toString().concat(possibleAnswer)}>{possibleAnswer}</label>
                         </div>
@@ -67,14 +69,24 @@ function Quiz() {
         } else {
             return (
                 <>
-                    {question.possibleAnswers.map(possibleAnswer => (
+                    {question.possibleAnswers.map((possibleAnswer, index) => (
                         <div key={possibleAnswer}>
                             <input
                                 type="checkbox"
                                 id={question.id.toString().concat(possibleAnswer)}
                                 name={question.id.toString()}
                                 value={possibleAnswer}
+                                 
                             />
+                            {index === 0 && (
+                                <input
+                                    type="hidden"
+                                    value=""
+                                    required
+                                    style={{ display: "none" }}
+                                    name={question.id.toString()}
+                                />
+                            )}
                             <label htmlFor={question.id.toString().concat(possibleAnswer)}>{possibleAnswer}</label>
                         </div>
                     ))}
@@ -88,7 +100,7 @@ function Quiz() {
         :
         <form onSubmit={onSubmit}>
             <label htmlFor="email">Enter your email:</label>
-            <input type="email" id="email" name="email"/>
+            <input type="email" id="email" name="email" required/>
             {questions.map(question =>
                 <div>
                     <h2>{question.title}</h2>
