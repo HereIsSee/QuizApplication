@@ -1,4 +1,6 @@
 import { useEffect, useState } from 'react';
+import './leaderboard.css';
+
 
 interface Player {
     id: number,
@@ -14,10 +16,14 @@ function Leaderboard() {
         getTopPlayers();
     }, []);
 
+    const positionColor = (position : number) => {
+        return position === 1 ? "table-warning" : position === 2 ? "table-secondary" : position === 3 ? "table-info" : "";
+    }
+
     return (
         <>
             <table className="table">
-                <thead className="thead-light">
+                <thead>
                     <tr>
                         <th scope="col">#</th>
                         <th scope="col">Email</th>
@@ -28,11 +34,11 @@ function Leaderboard() {
                 <tbody>
                     
                     {players.map((player, index) =>
-                        <tr>
-                            <th scope="row">{index}</th>
+                        <tr className={positionColor(index+ 1)}>
+                            <th className={positionColor(index + 1)} scope="row" >{index+1}</th>
                             <td>{player.email}</td>
                             <td>{player.score}</td>
-                            <td>{player.time.toLocaleString()}</td>
+                            <td>{new Date(player.time).toLocaleString('en-GB')}</td>
                         </tr>
                     )}
                     
