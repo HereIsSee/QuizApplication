@@ -24,50 +24,56 @@ namespace QuizApp.Server.Models
 
                 if(answer != null)
                 {
-                    switch(question.Type)
-                    {
-                        case "text input":
-                            if (answer == question.Answers[0])
-                            {
-                                score += 100;
-                            }
-                            break;
-                        case "single anwser":
-                            if (answer == question.Answers[0])
-                            {
-                                Console.WriteLine(answer);
-                                score += 100;
-                            }
-
-                            break;
-
-                        case "multiple answers":
-                            int correctAnwsers = 0;
-                            foreach (string questionAnswer in question.Answers)
-                            {
-                                Console.WriteLine(questionAnswer);
-                                foreach (string playerAnwser in answer.Split(','))
-                                {
-                                    Console.WriteLine(playerAnwser);
-                                    if (questionAnswer == playerAnwser)
-                                    {
-                                        correctAnwsers++;
-                                        break;
-                                    }
-
-                                }
-                            }
-                            double result = (100.0 / question.Answers.Count) * correctAnwsers;
-                            score += (int)Math.Round(result);
-                            break;
-
-                        default:
-                            
-                            break;
-                    }
+                    score += CalculateScoreForSingleQuestion(question, answer);
                 }
             }
 
+            return score;
+        }
+        private static int CalculateScoreForSingleQuestion(Question question, string answer)
+        {
+            int score = 0;
+            switch (question.Type)
+            {
+                case "text input":
+                    if (answer == question.Answers[0])
+                    {
+                        score += 100;
+                    }
+                    break;
+                case "single anwser":
+                    if (answer == question.Answers[0])
+                    {
+                        Console.WriteLine(answer);
+                        score += 100;
+                    }
+
+                    break;
+
+                case "multiple answers":
+                    int correctAnwsers = 0;
+                    foreach (string questionAnswer in question.Answers)
+                    {
+                        Console.WriteLine(questionAnswer);
+                        foreach (string playerAnwser in answer.Split(','))
+                        {
+                            Console.WriteLine(playerAnwser);
+                            if (questionAnswer == playerAnwser)
+                            {
+                                correctAnwsers++;
+                                break;
+                            }
+
+                        }
+                    }
+                    double result = (100.0 / question.Answers.Count) * correctAnwsers;
+                    score += (int)Math.Round(result);
+                    break;
+
+                default:
+
+                    break;
+            }
             return score;
         }
     }
