@@ -1,13 +1,16 @@
-//import { useEffect, useState } from 'react';
-//import './App.css';
-import NavigationBar from './components/NavigationBar'
-import Quiz from './components/Quiz'
+import NavigationBar from './components/NavigationBar';
+import Quiz from './components/Quiz';
+import Leaderboard from './components/Leaderboard';
+import { useState } from 'react';
 
 function App() {
+    const [currentView, setCurrentView] = useState<string>('Leaderboard'); // Default to showing Leaderboard
+
     return (
         <>
-            {NavigationBar()}
-            {Quiz()}
+            <NavigationBar setCurrentView={setCurrentView} />
+            {currentView === 'Quiz' && <Quiz />}
+            {currentView === 'Leaderboard' && <Leaderboard />}
         </>
     );
 }

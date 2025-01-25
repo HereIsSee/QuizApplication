@@ -84,7 +84,7 @@ function Quiz() {
     };
 
     const contents = questions === undefined
-    ? <p><em>Something went wrong, check API</em></p>
+    ? <p><em>Loading... Reload the page if it's still not working</em></p>
         :
         <form onSubmit={onSubmit}>
             <label htmlFor="email">Enter your email:</label>

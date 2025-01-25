@@ -37,15 +37,13 @@ app.MapGet("/leaderboard", async (PlayerContext context) =>
         .ToListAsync();
 
     return topTenPlayers;
-})
-.WithName("GetTopTenPlayers");
+});
 
 
 app.MapGet("/quiz", () =>
 {
     return questions;
-})
-.WithName("GetQuestions");
+});
 
 app.MapPost("/quiz", async (HttpRequest request, PlayerContext context) =>
 {
