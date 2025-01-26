@@ -1,17 +1,18 @@
 import { useEffect, useState } from 'react';
 import { Player } from '../interfaces/Player'
 
+
 interface Question {
     id: number;
     title: string;
     type: string;
     possibleAnswers: string[];
-    answers: string[];
 }
 
 function Quiz() {
     const [questions, setQuestions] = useState<Question[]>();
     const [submissionResult, setSubmissionResult] = useState<Player>();
+
     
     useEffect(() => {
         getQuestions();
@@ -72,6 +73,7 @@ function Quiz() {
 
     }
 
+    //Generates the question into html depending on whay type of question it 
     const quizType = (question: Question) => {
         if (question.type === "text input") {
             return (
@@ -136,9 +138,11 @@ function Quiz() {
         }
     };
 
+    //Questions being generated
     const contents = questions === undefined
         ? <p><em>Loading... Reload the page if it's still not working</em></p>
         :
+        
         <form onSubmit={onSubmit}>
             <div className="form-group mb-2">
                 <label htmlFor="email">Enter your email:</label>
@@ -159,6 +163,7 @@ function Quiz() {
             <button type="submit" className="btn btn-primary mb-2">Submit</button>
         </form>
 
+    //The Result is generated
     const resultContent = submissionResult && (
         <div className="card text-center">
             <div className="card-header bg-success text-white">Success</div>
@@ -181,21 +186,20 @@ function Quiz() {
         </div>
     );
 
+    //Returns the questinos or resultsContent depending on if the player data is present
     return (
         <div>
             {submissionResult ? resultContent : contents}
         </div>
     );
 
-
     async function getQuestions() {
         try {
             const response = await fetch('quiz');
 
-            console.log(JSON.stringify(response, null, 2));
-
             if (response.ok) {
                 const data = await response.json();
+                //console.log(JSON.stringify(data, null, 2));
                 setQuestions(randomizeQuestions(data));
 
             } else {
