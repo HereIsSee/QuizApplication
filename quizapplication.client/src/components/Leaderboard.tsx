@@ -27,7 +27,7 @@ function Leaderboard() {
                 <tbody>
                     
                     {players.map((player, index) =>
-                        <tr className={positionColor(index+ 1)}>
+                        <tr key={player.email} className={positionColor(index+ 1)}>
                             <th className={positionColor(index + 1)} scope="row" >{index+1}</th>
                             <td>{player.email}</td>
                             <td>{player.score}</td>

@@ -7,6 +7,7 @@ import Step from '@mui/material/Step'
 import StepLabel from '@mui/material/StepLabel'
 import Typography from '@mui/material/Typography'
 import Button from '@mui/material/Button';
+import Stack from '@mui/material/Stack';
 
 
 function Quiz() {
@@ -148,6 +149,7 @@ function Quiz() {
     };
 
     const handleTryAgain = () => {
+        setFormData({})
         setActiveStep(0);
         setSubmissionResult(undefined)
     }
@@ -160,6 +162,7 @@ function Quiz() {
                     className="form-control"
                     type="text"
                     name={question.id.toString()}
+                    autoComplete="off"
                     required
                 />
             );
@@ -231,26 +234,26 @@ function Quiz() {
                 ))}
             </Stepper>
             <form onSubmit={activeStep === questions.length ? handleSubmit : handleNext}>
-                <Typography>
+                <Typography sx={{mt:3} }>
                     {contentArray[activeStep]}
                 </Typography>
-
-                <Button
-                    variant="contained"
-                    onClick={handleBack}
-                    disabled={activeStep === 0}
-                >
-                    Previous
-                </Button>
-                <Button
-                    variant="contained"
-                    type="submit"
-                    color={activeStep === contentArray.length - 1 ? "success" : "primary"}
-                >
-                    {activeStep === contentArray.length - 1 ? 'Submit' : 'Next'}
-                </Button>
-
-
+                <Stack direction="row" spacing={ 2 }>
+                    <Button
+                        variant="contained"
+                        onClick={handleBack}
+                        disabled={activeStep === 0}
+                        
+                    >
+                        Previous
+                    </Button>
+                    <Button
+                        variant="contained"
+                        type="submit"
+                        color={activeStep === contentArray.length - 1 ? "success" : "primary"}
+                    >
+                        {activeStep === contentArray.length - 1 ? 'Submit' : 'Next'}
+                    </Button>
+                </Stack>
             </form>
         </>
 
