@@ -11,7 +11,7 @@ namespace QuizApp.Server.Models
         public List<string> PossibleAnswers { get; set; } = new List<string>();
 
         [JsonIgnore]
-        public List<string>? Answers { get; set; } = new List<string>();
+        public List<string> Answers { get; set; } = new List<string>();
 
         public Question(int id, string title, string type, List<string> possibleAnwsers, List<string> answers)
         {
@@ -21,7 +21,6 @@ namespace QuizApp.Server.Models
             PossibleAnswers = possibleAnwsers;
             Answers = answers;
         }
-
 
         public static List<Question> GetQuestions()
         {

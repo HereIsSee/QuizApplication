@@ -1,23 +1,58 @@
 import { useEffect, useState } from 'react';
 import { Player } from '../interfaces/Player'
+import { Question } from '../interfaces/Question'
 
+import Stepper from '@mui/material/Stepper'
+import Step from '@mui/material/Step'
+import StepLabel from '@mui/material/StepLabel'
+import Typography from '@mui/material/Typography'
+import Button from '@mui/material/Button';
 
-interface Question {
-    id: number;
-    title: string;
-    type: string;
-    possibleAnswers: string[];
-}
 
 function Quiz() {
-    const [questions, setQuestions] = useState<Question[]>();
+    const [questions, setQuestions] = useState<Question[]>([]);
     const [submissionResult, setSubmissionResult] = useState<Player>();
+    const [activeStep, setActiveStep] = useState(0);
+    const [contentArray, setContentArray] = useState<JSX.Element[]>([]);
+    const [formData, setFormData] = useState<{ [key: string]: string}>({});
 
+
+
+    const steps = ["", "", "", "", "", "", "", "", "", "", "",]
     
+
     useEffect(() => {
         getQuestions();
     }, []);
 
+    useEffect(() => {
+        // Generate content when questions are updated
+        if (questions.length > 0) {
+            generateContent();
+        }
+    }, [questions]);
+
+    const generateContent = () => {
+        const content = [
+            <div className="form-group mb-2" key="email">
+                <label htmlFor="email">Enter your email:</label>
+                <input
+                    className="form-control"
+                    type="email" id="email"
+                    name="email"
+                    required />
+            </div>,
+            ...questions.map((question, index) => (
+                <div className="card mb-3" key={index}>
+                    <div className="card-body">
+                        <p className="card-title fw-bold">{question.title}</p>
+                        <div className="card-text">{quizType(question)}</div>
+                    </div>
+                </div>
+            )),
+        ];
+        setContentArray(content); // Save generated content to state
+    };
 
     const randomizeQuestions = (array: Question[]): Question[] => {
         const shuffledQuestions = [...array];
@@ -43,34 +78,79 @@ function Quiz() {
         return shuffledQuestions;
     };
 
+    const handleBack = () => {
+        setActiveStep((prevActiveStep) => prevActiveStep - 1);
+    }
 
-
-    const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    const handleNext = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
-        const formData = new FormData(e.currentTarget);
+        const form = e.currentTarget; // Get the form element
+        const formDataObj = new FormData(form); // Extract data from the form
 
-        fetch('quiz', {
-            method: 'POST',
-            body: formData,
-        }).then((response) => {
-            if (response.ok) {
-                return response.json(); // Return the JSON data as a promise
+        // Convert FormData to a plain object with comma-separated values for multiple answers
+        const updatedData: { [key: string]: string } = { ...formData };
+        formDataObj.forEach((value, key) => {
+            if (updatedData[key]) {
+                // If the key already exists, append the new value with a comma
+                updatedData[key] += `,${value}`;
             } else {
-                console.error("Response error:", response.status, response.statusText);
-                return Promise.reject("Failed to fetch data");
+                // Otherwise, set the initial value
+                updatedData[key] = value as string;
             }
-        }).then((data) => {
-            setSubmissionResult(data);
-            if (questions) {
-                setQuestions(randomizeQuestions(questions)); // Reshuffle existing questions
-            }
-            
-        }).catch((error) => {
-            console.error("Error:", error);
         });
 
+        setFormData(updatedData); // Update the form data state
 
+        // Move to the next step
+        if (activeStep < questions.length)
+            setActiveStep((prevActiveStep) => prevActiveStep + 1);
+    };
+
+
+
+
+    const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+
+        //Submits the current questions answer to formData
+        handleNext(e);
+
+
+        console.log(JSON.stringify(formData, null, 2));
+
+        //Make sure the formData is up to date from the last call by calling setFormData
+        setFormData((prevFormData) => {
+            // Log the form data after the final step
+            console.log(JSON.stringify(prevFormData, null, 2));
+
+            // Submit the form
+            fetch('quiz', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(prevFormData),
+            }).then((response) => {
+                if (response.ok) {
+                    return response.json();
+                } else {
+                    throw new Error('Failed to submit quiz');
+                }
+            })
+            .then((data) => {
+                setSubmissionResult(data);
+            })
+            .catch((error) => {
+                console.error('Error during submission:', error);
+            });
+
+            return prevFormData; // Ensure the state is returned correctly
+        });  
+
+    };
+
+    const handleTryAgain = () => {
+        setActiveStep(0);
+        setSubmissionResult(undefined)
     }
 
     //Generates the question into html depending on whay type of question it 
@@ -138,30 +218,42 @@ function Quiz() {
         }
     };
 
+
     //Questions being generated
-    const contents = questions === undefined
+    const contents = questions.length === 0
         ? <p><em>Loading... Reload the page if it's still not working</em></p>
         :
-        
-        <form onSubmit={onSubmit}>
-            <div className="form-group mb-2">
-                <label htmlFor="email">Enter your email:</label>
-                <input className="form-control" type="email" id="email" name="email" required />
-            </div>
+        <>
+            <Stepper activeStep={activeStep}>
+                {steps.map((step) => (
+                    <Step key={step}>
+                        <StepLabel>{step}</StepLabel>
+                    </Step>
+                ))}
+            </Stepper>
+            <form onSubmit={activeStep === questions.length ? handleSubmit : handleNext}>
+                <Typography>
+                    {contentArray[activeStep]}
+                </Typography>
 
-            {questions.map((question, index) => (
-                <div className="card mb-3" key={index}>
-                    <div className="card-body">
-                        <p className="card-title fw-bold">{question.title}</p>
-                        <div className="card-text">
-                            {quizType(question)}
-                        </div>
-                    </div>
-                </div>
-            ))}
+                <Button
+                    variant="contained"
+                    onClick={handleBack}
+                    disabled={activeStep === 0}
+                >
+                    Previous
+                </Button>
+                <Button
+                    variant="contained"
+                    type="submit"
+                    
+                >
+                    {activeStep === contentArray.length - 1 ? 'Submit' : 'Next'}
+                </Button>
+                
 
-            <button type="submit" className="btn btn-primary mb-2">Submit</button>
-        </form>
+            </form>
+        </>
 
     //The Result is generated
     const resultContent = submissionResult && (
@@ -182,7 +274,7 @@ function Quiz() {
                 </p>
             </div>
 
-            <button className="btn btn-primary mb-2" onClick={() => setSubmissionResult(undefined)} >Try again?</button>
+            <button className="btn btn-primary mb-2" onClick={handleTryAgain} >Try again?</button>
         </div>
     );
 

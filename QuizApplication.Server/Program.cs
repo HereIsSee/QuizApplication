@@ -4,8 +4,6 @@ using QuizApp.Server.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 //builder.Services.AddOpenApi();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -47,10 +45,16 @@ app.MapGet("/quiz", () =>
 
 app.MapPost("/quiz", async (HttpRequest request, PlayerContext context) =>
 {
-    var form = await request.ReadFormAsync();
+    using var reader = new StreamReader(request.Body);
+    var body = await reader.ReadToEndAsync();
 
-    // Retrieve all posted data
-    var formData = form.ToDictionary(k => k.Key, v => v.Value.ToString());
+    // Parse the JSON payload into a dictionary
+    var formData = System.Text.Json.JsonSerializer.Deserialize<Dictionary<string, string>>(body);
+
+    if (formData == null || !formData.ContainsKey("email"))
+    {
+        return Results.BadRequest("Invalid data received.");
+    }
 
     int score = Player.CalculateScore(questions, formData);
 
