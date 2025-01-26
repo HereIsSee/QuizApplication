@@ -14,12 +14,12 @@ function Quiz() {
     const [submissionResult, setSubmissionResult] = useState<Player>();
     const [activeStep, setActiveStep] = useState(0);
     const [contentArray, setContentArray] = useState<JSX.Element[]>([]);
-    const [formData, setFormData] = useState<{ [key: string]: string}>({});
+    const [formData, setFormData] = useState<{ [key: string]: string }>({});
 
 
 
     const steps = ["", "", "", "", "", "", "", "", "", "", "",]
-    
+
 
     useEffect(() => {
         getQuestions();
@@ -78,13 +78,7 @@ function Quiz() {
         return shuffledQuestions;
     };
 
-    const handleBack = () => {
-        setActiveStep((prevActiveStep) => prevActiveStep - 1);
-    }
-
-    const handleNext = (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault();
-
+    const getUpdatedData = (e: React.FormEvent<HTMLFormElement>) => {
         const form = e.currentTarget; // Get the form element
         const formDataObj = new FormData(form); // Extract data from the form
 
@@ -99,7 +93,18 @@ function Quiz() {
                 updatedData[key] = value as string;
             }
         });
+        return updatedData;
+    }
 
+    const handleBack = () => {
+        setActiveStep((prevActiveStep) => prevActiveStep - 1);
+    }
+
+    const handleNext = (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+
+
+        const updatedData = getUpdatedData(e);
         setFormData(updatedData); // Update the form data state
 
         // Move to the next step
@@ -113,38 +118,32 @@ function Quiz() {
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
-        //Submits the current questions answer to formData
-        handleNext(e);
+        const updatedData = getUpdatedData(e);
 
+        setFormData(updatedData); //wait until this is done then continue
 
-        console.log(JSON.stringify(formData, null, 2));
+        // Wait for the state update to propagate
+        const updatedFormData = { ...updatedData };
 
-        //Make sure the formData is up to date from the last call by calling setFormData
-        setFormData((prevFormData) => {
-            // Log the form data after the final step
-            console.log(JSON.stringify(prevFormData, null, 2));
-
-            // Submit the form
-            fetch('quiz', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(prevFormData),
-            }).then((response) => {
-                if (response.ok) {
-                    return response.json();
-                } else {
-                    throw new Error('Failed to submit quiz');
-                }
-            })
+        console.log(JSON.stringify(updatedFormData, null, 2));
+        // Submit the form
+        fetch('quiz', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(updatedFormData),
+        }).then((response) => {
+            if (response.ok) {
+                return response.json();
+            } else {
+                throw new Error('Failed to submit quiz');
+            }
+        })
             .then((data) => {
                 setSubmissionResult(data);
             })
             .catch((error) => {
                 console.error('Error during submission:', error);
             });
-
-            return prevFormData; // Ensure the state is returned correctly
-        });  
 
     };
 
@@ -170,12 +169,12 @@ function Quiz() {
                     {question.possibleAnswers.map(possibleAnswer => (
                         <div key={possibleAnswer}>
                             <input
-                                className="form-check-input" 
+                                className="form-check-input"
                                 type="radio"
                                 id={question.id.toString().concat(possibleAnswer)}
                                 name={question.id.toString()}
                                 value={possibleAnswer}
-                                required 
+                                required
                             />
                             <label
                                 className="form-check-label"
@@ -196,7 +195,7 @@ function Quiz() {
                                 id={question.id.toString().concat(possibleAnswer)}
                                 name={question.id.toString()}
                                 value={possibleAnswer}
-                                 
+
                             />
                             {index === 0 && (
                                 <input
@@ -225,8 +224,8 @@ function Quiz() {
         :
         <>
             <Stepper activeStep={activeStep}>
-                {steps.map((step) => (
-                    <Step key={step}>
+                {steps.map((step, index) => (
+                    <Step key={index}>
                         <StepLabel>{step}</StepLabel>
                     </Step>
                 ))}
@@ -246,11 +245,11 @@ function Quiz() {
                 <Button
                     variant="contained"
                     type="submit"
-                    
+                    color={activeStep === contentArray.length - 1 ? "success" : "primary"}
                 >
                     {activeStep === contentArray.length - 1 ? 'Submit' : 'Next'}
                 </Button>
-                
+
 
             </form>
         </>
